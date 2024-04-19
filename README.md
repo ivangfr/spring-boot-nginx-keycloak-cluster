@@ -28,7 +28,7 @@ On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-C
 
 Add the line below to `/etc/hosts`
 ```
-127.0.0.1 nginx
+127.0.0.1 nginx.keycloak.cluster
 ```
 
 ## Starting Environment
@@ -40,7 +40,7 @@ Open a terminal and inside the `spring-boot-nginx-keycloak-cluster` root folder 
 
 ## Configuring simple-service in Keycloak
 
-We can configure `simple-service` in `Keycloak` by using its website at http://nginx:8080. However, to keep things simple and fast, we've created a script for it.
+We can configure `simple-service` in `Keycloak` by using its website at http://nginx.keycloak.cluster. However, to keep things simple and fast, we've created a script for it.
 
 So, in a terminal, make sure you are inside the `spring-boot-nginx-keycloak-cluster` root folder, run the script below:
 ```
@@ -79,15 +79,16 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
 
 - ### Environment Variables
 
-  | Environment Variable | Description                                                      |
-  |----------------------|------------------------------------------------------------------|
-  | `NGINX_URI`          | Specify host of the `Nginx` server to use (default `nginx:8080`) |
+  | Environment Variable | Description                                                                  |
+  |----------------------|------------------------------------------------------------------------------|
+  | `NGINX_URI`          | Specify host of the `Nginx` server to use (default `nginx.keycloak.cluster`) |
 
 - ### Run Docker Containers
 
   Run the following command in a terminal:
   ```
-  docker run --rm --name simple-service \
+  docker run --rm \
+    --name simple-service \
     -p 9080:9080 \
     --network=spring-boot-nginx-keycloak-cluster-net \
     ivanfranchin/simple-service:1.0.0
@@ -128,7 +129,7 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
 5. Run the command below to get an access token for `user-test` user:
    ```
    USER_TEST_ACCESS_TOKEN="$(curl -s -X POST \
-     "http://nginx:8080/realms/company-services/protocol/openid-connect/token" \
+     "http://nginx.keycloak.cluster/realms/company-services/protocol/openid-connect/token" \
      -H "Content-Type: application/x-www-form-urlencoded" \
      -d "username=user-test" \
      -d "password=123" \
@@ -164,7 +165,7 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
 
 - **Keycloak**
   
-  The `Keycloak` website is at http://nginx:8080
+  The `Keycloak` website is at http://nginx.keycloak.cluster
 
 - **Nginx**
 
@@ -173,7 +174,7 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
   - Apply the needed changes in the `nginx/nginx.conf` file;
   - Docker exec into the `nginx` Docker container
     ```
-    docker exec -it nginx bash
+    docker exec -it nginx.keycloak.cluster bash
     ```
   - In the terminal of the Docker container, run:
     ```

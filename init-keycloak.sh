@@ -5,7 +5,7 @@ if [[ -z $(docker ps --filter "name=keycloak1" -q) ]]; then
   exit 1
 fi
 
-KEYCLOAK_HOST_PORT="nginx:8080"
+KEYCLOAK_HOST_PORT="nginx.keycloak.cluster"
 echo
 echo "KEYCLOAK_HOST_PORT: $KEYCLOAK_HOST_PORT"
 

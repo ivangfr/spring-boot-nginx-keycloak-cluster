@@ -42,7 +42,7 @@ docker run -d \
     -e KC_DB_USERNAME=keycloak \
     -e KC_DB_PASSWORD=password \
     -e KC_CACHE=ispn \
-    -e KC_HOSTNAME=nginx \
+    -e KC_HOSTNAME=nginx.keycloak.cluster \
     -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
     --network=spring-boot-nginx-keycloak-cluster-net \
     quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev
@@ -61,7 +61,7 @@ docker run -d \
     -e KC_DB_USERNAME=keycloak \
     -e KC_DB_PASSWORD=password \
     -e KC_CACHE=ispn \
-    -e KC_HOSTNAME=nginx \
+    -e KC_HOSTNAME=nginx.keycloak.cluster \
     -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
     --network=spring-boot-nginx-keycloak-cluster-net \
     quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev
@@ -76,14 +76,14 @@ echo
 wait_for_container_log "keycloak2" "started in"
 
 docker run -d \
-  --name nginx  \
-  -p 8080:8080 \
+  --name nginx.keycloak.cluster \
+  -p 80:80 \
   -v $PWD/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
   --network spring-boot-nginx-keycloak-cluster-net \
   nginx:${NGINX_VERSION}
 
 echo
-wait_for_container_log "nginx" "ready for start up"
+wait_for_container_log "nginx.keycloak.cluster" "ready for start up"
 
 echo
 echo "Environment Up and Running"
