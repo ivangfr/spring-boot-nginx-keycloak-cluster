@@ -1,54 +1,197 @@
 # spring-boot-nginx-keycloak-cluster
 
-## Start Environment
+The goal is to run a [`Keycloak`](https://www.keycloak.org/) cluster with two instances and add [`Nginx`](https://nginx.org/en/) in front of the cluster as a reverse proxy and load balancer. Additionally, we will implement a [`Spring Boot`](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/) application called `simple-service` that will use `Keycloak` for IAM. The requests from the `simple-service` to the `Keycloak` cluster will go through the `Nginx` server.
+
+## Proof-of-Concepts & Articles
+
+On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-Concepts (PoCs) and articles. You can easily search for the technology you are interested in by using the filter. Who knows, perhaps I have already implemented a PoC or written an article about what you are looking for.
+
+## Project Diagram
+
+![project-diagram](documentation/project-diagram.jpeg)
+
+## Application
+
+- ### simple-service
+
+  `Spring Boot` Web Java application that exposes the following endpoints:
+  - `GET /api/public`: This endpoint is not secured; everybody can access it;
+  - `GET /api/secured`: This endpoint is secured and can only be accessed by users who provide a `JWT` access token issued by `Keycloak`. The token must contain the role `APP_USER`.
+
+## Prerequisites
+
+- [`Java 17+`](https://www.oracle.com/java/technologies/downloads/#java17)
+- [`Docker`](https://www.docker.com/)
+- [`jq`](https://stedolan.github.io/jq)
+
+## Configure /etc/hosts
+
+Add the line below to `/etc/hosts`
+```
+127.0.0.1 nginx
+```
+
+## Starting Environment
+
+Open a terminal and inside the `spring-boot-nginx-keycloak-cluster` root folder run:
 ```
 ./init-environment.sh
 ```
 
-## Initialize Keycloak
+## Configuring simple-service in Keycloak
+
+We can configure `simple-service` in `Keycloak` by using its website at http://nginx:8080. However, to keep things simple and fast, we've created a script for it.
+
+So, in a terminal, make sure you are inside the `spring-boot-nginx-keycloak-cluster` root folder, run the script below:
 ```
 ./init-keycloak.sh
 ```
 
-## Start simple-service
-```
-./mvnw clean spring-boot:run --projects simple-service
-```
+The script will:
+- create `company-services` realm;
+- disable the required action `Verify Profile`;
+- create `simple-service` client;
+- create the client role `APP_USER` for the `simple-service` client;
+- create `USERS` group;
+- assign `APP_USER` client role to `USERS` group;
+- create `user-test` user;
+- assign `USERS` group to `user-test`;
 
-## Build Docker Image
-```
-./mvnw clean compile jib:dockerBuild --projects simple-service
-```
+To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the end of the script. It will be needed whenever we call `Keycloak` to get a `JWT` access token to access `simple-service`.
 
-## Run Docker Image
-```
-docker run --rm --name simple-service \
-  -p 9080:9080 \
-  --network=spring-boot-nginx-keycloak-cluster-net \
-  ivanfranchin/simple-service:1.0.0
-```
+## Running simple-service with Maven
 
-## Create Environment Variable
-```
-SIMPLE_SERVICE_CLIENT_SECRET=...
-```
+- In a terminal, make sure you are in the `spring-boot-nginx-keycloak-cluster` root folder.
+- Run the command below to start the application:
+  ```
+  ./mvnw clean spring-boot:run --projects simple-service
+  ```
 
-## Get Access Token
-```
-USER_TEST_ACCESS_TOKEN="$(curl -s -X POST \
-  "http://nginx:8080/realms/company-services/protocol/openid-connect/token" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=user-test" \
-  -d "password=123" \
-  -d "grant_type=password" \
-  -d "client_secret=$SIMPLE_SERVICE_CLIENT_SECRET" \
-  -d "client_id=simple-service" | jq -r .access_token)"
-echo $USER_TEST_ACCESS_TOKEN
-```
+## Running simple-service as Docker container
 
-## API Requests
+- ### Build Docker Images
+
+  - In a terminal, make sure you are inside the `spring-boot-nginx-keycloak-cluster` root folder.
+  - Run the following command:
+    ```
+    ./mvnw clean compile jib:dockerBuild --projects simple-service
+    ```
+
+- ### Environment Variables
+
+  | Environment Variable | Description                                                      |
+  |----------------------|------------------------------------------------------------------|
+  | `NGINX_URI`          | Specify host of the `Nginx` server to use (default `nginx:8080`) |
+
+- ### Run Docker Containers
+
+  Run the following command in a terminal:
+  ```
+  docker run --rm --name simple-service \
+    -p 9080:9080 \
+    --network=spring-boot-nginx-keycloak-cluster-net \
+    ivanfranchin/simple-service:1.0.0
+  ```
+
+## Testing the simple-service endpoints
+
+1. Open a new terminal;
+
+2. Call the endpoint `GET /public`:
+   ```
+   curl -i http://localhost:9080/public
+   ```
+
+   It should return:
+   ```
+   HTTP/1.1 200
+   ...
+   Hi World, I am a public endpoint
+   ```
+
+3. Try to call the endpoint `GET /secured` without authentication:
+   ```
+   curl -i http://localhost:9080/secured
+   ```
+
+   It should return:
+   ```
+   HTTP/1.1 401
+   ...
+   ```
+
+4. Create an environment variable that contains the `Client Secret` generated by `Keycloak` to `simple-service` at [Configure Keycloak](#configure-keycloak) step:
+   ```
+   SIMPLE_SERVICE_CLIENT_SECRET=...
+   ```
+
+5. Run the command below to get an access token for `user-test` user:
+   ```
+   USER_TEST_ACCESS_TOKEN="$(curl -s -X POST \
+     "http://nginx:8080/realms/company-services/protocol/openid-connect/token" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "username=user-test" \
+     -d "password=123" \
+     -d "grant_type=password" \
+     -d "client_secret=$SIMPLE_SERVICE_CLIENT_SECRET" \
+     -d "client_id=simple-service" | jq -r .access_token)"
+   echo $USER_TEST_ACCESS_TOKEN
+   ```
+
+6. Call the endpoint `GET /secured`:
+   ```
+   curl -i http://localhost:9080/secured -H "Authorization: Bearer $USER_TEST_ACCESS_TOKEN"
+   ```
+
+   It should return:
+   ```
+   HTTP/1.1 200
+   ...
+   Hi user-test, I am a secured endpoint
+   ```
+
+7. The access token default expiration period is `5 minutes`. So, wait for this time and, using the same access token, try to call the secured endpoint.
+
+   It should return:
+   ```
+   HTTP/1.1 401
+   ...
+   WWW-Authenticate: Bearer error="invalid_token", error_description="An error occurred while attempting to decode the Jwt: Jwt expired at ...", error_uri="https://tools.ietf.org/html/rfc6750#section-3.1"
+   ...
+   ```
+
+## Useful Links & Commands
+
+- **Keycloak**
+  
+  The `Keycloak` website is at http://nginx:8080
+
+- **Nginx**
+
+  In case you want to change the `Nginx` config file without restarting it's Docker container, do the following:
+  
+  - Apply the needed changes in the `nginx/nginx.conf` file;
+  - Docker exec into the `nginx` Docker container
+    ```
+    docker exec -it nginx bash
+    ```
+  - In the terminal of the Docker container, run:
+    ```
+    nginx -s reload
+    ```
+  - To exit, just run the command `exit` in Docker container terminal.
+
+## Shutdown
+
+- To stop `simple-service` application, go to the terminal where it is running and press `Ctrl+C`
+- To stop and remove docker containers, network and volumes, go to a terminal and inside the `spring-boot-nginx-keycloak-cluster` root folder, run the following script:
+  ```
+  ./shutdown-environment.sh
+  ```
+
+## Cleanup
+
+In case you have created the `simple-service` Docker image, in order to remove it, simply go to a terminal and run the following command:
 ```
-curl -i localhost:9080/public
-curl -i localhost:9080/secured
-curl -i http://localhost:9080/secured -H "Authorization: Bearer $USER_TEST_ACCESS_TOKEN"
+docker rmi ivanfranchin/simple-service:1.0.0
 ```
