@@ -82,7 +82,7 @@ curl -i -X POST "http://$KEYCLOAK_HOST_PORT/admin/realms/company-services/client
   -H "Content-Type: application/json" \
   -d '{"name": "APP_USER"}'
 
-APP_USER_CLIENT_ROLE_ID=$(curl -s http://localhost:8080/admin/realms/company-services/clients/$CLIENT_ID/roles/APP_USER \
+APP_USER_CLIENT_ROLE_ID=$(curl -s "http://$KEYCLOAK_HOST_PORT/admin/realms/company-services/clients/$CLIENT_ID/roles/APP_USER" \
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq -r '.id')
 
 echo "APP_USER_CLIENT_ROLE_ID=$APP_USER_CLIENT_ROLE_ID"
