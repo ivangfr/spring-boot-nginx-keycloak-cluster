@@ -3,6 +3,12 @@
 POSTGRES_VERSION="16.1"
 KEYCLOAK_VERSION="24.0.2"
 NGINX_VERSION="1.25.4"
+SIMPLE_SERVICE_VERSION="1.0.0"
+
+if [[ "$(docker images -q ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION} 2> /dev/null)" == "" ]] ; then
+  echo "[WARNING] Before initialize the environment, build the simple-service Docker image"
+  exit 1
+fi
 
 source scripts/my-functions.sh
 
@@ -42,7 +48,7 @@ docker run -d \
   -e KC_DB_USERNAME=keycloak \
   -e KC_DB_PASSWORD=password \
   -e KC_CACHE=ispn \
-  -e KC_HOSTNAME=nginx.keycloak.cluster \
+  -e KC_HOSTNAME=keycloak-cluster.lb \
   -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
   --network=spring-boot-nginx-keycloak-cluster-net \
   quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev
@@ -61,7 +67,7 @@ docker run -d \
   -e KC_DB_USERNAME=keycloak \
   -e KC_DB_PASSWORD=password \
   -e KC_CACHE=ispn \
-  -e KC_HOSTNAME=nginx.keycloak.cluster \
+  -e KC_HOSTNAME=keycloak-cluster.lb \
   -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
   --network=spring-boot-nginx-keycloak-cluster-net \
   quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev
@@ -75,15 +81,44 @@ wait_for_container_log "keycloak1" "started in"
 echo
 wait_for_container_log "keycloak2" "started in"
 
+echo
+echo "Starting simple-service 1"
+echo "-------------------------"
+
 docker run -d \
-  --name nginx.keycloak.cluster \
+  --name simple-service1 \
+  --network=spring-boot-nginx-keycloak-cluster-net \
+  ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION}
+
+echo
+echo "Starting simple-service 2"
+echo "-------------------------"
+
+docker run -d \
+  --name simple-service2 \
+  --network=spring-boot-nginx-keycloak-cluster-net \
+  ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION}
+
+echo
+wait_for_container_log "simple-service1" "Started"
+
+echo
+wait_for_container_log "simple-service2" "Started"
+
+echo
+echo "Starting nginx"
+echo "--------------"
+
+docker run -d \
+  --name nginx \
+  --hostname keycloak-cluster.lb \
   -p 80:80 \
   -v $PWD/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
   --network spring-boot-nginx-keycloak-cluster-net \
   nginx:${NGINX_VERSION}
 
 echo
-wait_for_container_log "nginx.keycloak.cluster" "ready for start up"
+wait_for_container_log "nginx" "ready for start up"
 
 echo
 echo "Environment Up and Running"

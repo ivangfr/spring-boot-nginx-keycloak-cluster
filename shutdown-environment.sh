@@ -7,7 +7,7 @@ echo "================================="
 echo
 echo "Removing containers"
 echo "-------------------"
-docker rm -fv nginx.keycloak.cluster keycloak1 keycloak2 postgres
+docker rm -fv nginx simple-service1 simple-service2 keycloak1 keycloak2 postgres
 
 echo
 echo "Removing network"
