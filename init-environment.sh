@@ -49,6 +49,7 @@ docker run -d \
   -e KC_DB_PASSWORD=password \
   -e KC_CACHE=ispn \
   -e KC_HOSTNAME=keycloak-cluster.lb \
+  -e KC_PROXY_HEADERS=xforwarded \
   -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
   --network=spring-boot-nginx-keycloak-cluster-net \
   quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev
@@ -68,6 +69,7 @@ docker run -d \
   -e KC_DB_PASSWORD=password \
   -e KC_CACHE=ispn \
   -e KC_HOSTNAME=keycloak-cluster.lb \
+  -e KC_PROXY_HEADERS=xforwarded \
   -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
   --network=spring-boot-nginx-keycloak-cluster-net \
   quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev

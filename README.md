@@ -55,7 +55,7 @@ This script will start:
 
 ## Configuring Keycloak
 
-We can configure `simple-service` client in `Keycloak` by using its website at http://keycloak-cluster.lb. However, to keep things simple and fast, we've created a script for it.
+We can configure a client for `simple-service` in `Keycloak` by using `Keycloak` website at http://keycloak-cluster.lb. However, to keep things simple and fast, we've created a script for it.
 
 So, in a terminal, make sure you are inside the `spring-boot-nginx-keycloak-cluster` root folder, run the script below:
 ```
