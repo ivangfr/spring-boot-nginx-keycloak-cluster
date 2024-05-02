@@ -6,6 +6,12 @@ The goal of this project is to use [`Nginx`](https://nginx.org/en/) as a reverse
 
 On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-Concepts (PoCs) and articles. You can easily search for the technology you are interested in by using the filter. Who knows, perhaps I have already implemented a PoC or written an article about what you are looking for.
 
+## Additional Readings
+
+- \[**Medium**\] [**Using Nginx to Load Balance Requests to a Spring Boot Web application**](https://medium.com/@ivangfr/using-nginx-to-load-balance-requests-to-a-spring-boot-web-application-83a497a2f8ab)
+- \[**Medium**\] [**Using Nginx to Load Balance Requests to a Keycloak Cluster**](https://medium.com/@ivangfr/using-nginx-to-load-balance-requests-to-a-keycloak-cluster-52174c89a0e4)
+- \[**Medium**\] [**Nginx Load Balancing Requests to a Keycloak Cluster and a Spring Boot app that uses Keycloak as IAM**](https://medium.com/@ivangfr/nginx-load-balancing-requests-to-a-keycloak-cluster-and-a-spring-boot-app-that-uses-keycloak-as-iam-8e9e8280587d)
+
 ## Project Diagram
 
 ![project-diagram](documentation/project-diagram.jpeg)
