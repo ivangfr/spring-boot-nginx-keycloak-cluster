@@ -7,7 +7,7 @@
         <groupId>com.ivanfranchin</groupId>
         <artifactId>spring-boot-nginx-keycloak-cluster</artifactId>
         <version>1.0.0</version>
-		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>simple-service</artifactId>
