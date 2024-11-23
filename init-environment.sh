@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-POSTGRES_VERSION="16.1"
-KEYCLOAK_VERSION="24.0.2"
-NGINX_VERSION="1.25.4"
+POSTGRES_VERSION="17.0"
+KEYCLOAK_VERSION="26.0.5"
+NGINX_VERSION="1.27.2"
 SIMPLE_SERVICE_VERSION="1.0.0"
 
 if [[ "$(docker images -q ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION} 2> /dev/null)" == "" ]] ; then
