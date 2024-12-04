@@ -27,12 +27,12 @@ On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-C
 ## Prerequisites
 
 - [`Java 21+`](https://www.oracle.com/java/technologies/downloads/#java21)
-- [`Docker`](https://www.docker.com/)
+- Some containerization tool [`Docker`](https://www.docker.com), [`Podman`](https://podman.io), etc.
 - [`jq`](https://jqlang.github.io/jq/)
 
 ## Building simple-service Docker Image
 
-- In a terminal, make sure you are inside the `spring-boot-nginx-keycloak-cluster` root folder.
+- In a terminal, navigate to `spring-boot-nginx-keycloak-cluster` root folder.
 
 - Run the following script:
   ```
@@ -151,21 +151,21 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
 
    We can verify that `Nginx` is load balancing the requests appropriately when an access token request to `Keycloak` is made. To view the `Keycloak` Docker container logs, execute the following commands in different terminals:
    ```
-   docker logs keycloak1 -f
-   docker logs keycloak2 -f
+   docker logs -f keycloak1
+   docker logs -f keycloak2
    ```
 
    We can also verify that `Nginx` is appropriately load balancing requests to `simple-service` endpoints. To view the `simple-service` Docker container logs, execute the following commands in different terminals:
    ```
-   docker logs simple-service1 -f
-   docker logs simple-service2 -f
+   docker logs -f simple-service1
+   docker logs -f simple-service2
    ```
 
 ## Useful Links & Commands
 
 - **Keycloak**
-  
-  The `Keycloak` website is at http://keycloak-cluster.lb
+
+  The `Keycloak` website can be accessed at http://keycloak-cluster.lb
 
 - **Nginx**
 
@@ -184,14 +184,14 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
 
 ## Shutdown
 
-To stop and remove docker containers, network and volumes, go to a terminal and inside the `spring-boot-nginx-keycloak-cluster` root folder, run the following script:
+To stop and remove docker containers, network and volumes, in a terminal, navigate to the `spring-boot-nginx-keycloak-cluster` root folder, run the following script:
 ```
 ./shutdown-environment.sh
 ```
 
 ## Cleanup
 
-To remove the `simple-service` Docker image created, simply go to a terminal and run the following script:
+To remove the `simple-service` Docker image created, in a terminal and inside the `spring-boot-nginx-keycloak-cluster` root folder, run the following script:
 ```
 ./remove-docker-images.sh
 ```
