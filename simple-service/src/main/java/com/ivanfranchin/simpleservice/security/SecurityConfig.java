@@ -8,16 +8,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class WebSecurityConfig {
+public class SecurityConfig {
 
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
-    public WebSecurityConfig(JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter) {
+    public SecurityConfig(JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter) {
         this.jwtAuthenticationTokenConverter = jwtAuthenticationTokenConverter;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.GET, "/public").permitAll()
