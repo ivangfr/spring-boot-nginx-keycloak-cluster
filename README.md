@@ -32,11 +32,11 @@ On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-C
 
 ## Building simple-service Docker Image
 
-- In a terminal, navigate to `spring-boot-nginx-keycloak-cluster` root folder.
+- In a terminal, navigate to the `spring-boot-nginx-keycloak-cluster` root folder.
 
 - Run the following script:
   ```
-  ./docker-build.sh
+  ./build-docker-images.sh
   ```
 
 ## Configure /etc/hosts
