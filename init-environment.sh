@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 POSTGRES_VERSION="17.2"
-KEYCLOAK_VERSION="26.0.7"
-NGINX_VERSION="1.27.3"
+KEYCLOAK_VERSION="26.0.8"
+NGINX_VERSION="1.27.4"
 SIMPLE_SERVICE_VERSION="1.0.0"
 
 if [[ "$(docker images -q ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION} 2> /dev/null)" == "" ]] ; then
@@ -40,8 +40,8 @@ echo "-------------------"
 
 docker run -d \
   --name keycloak1 \
-  -e KEYCLOAK_ADMIN=admin \
-  -e KEYCLOAK_ADMIN_PASSWORD=admin \
+  -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+  -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
   -e KC_DB=postgres \
   -e KC_DB_URL_HOST=postgres \
   -e KC_DB_URL_DATABASE=keycloak \
@@ -60,8 +60,8 @@ echo "-------------------"
 
 docker run -d \
   --name keycloak2 \
-  -e KEYCLOAK_ADMIN=admin \
-  -e KEYCLOAK_ADMIN_PASSWORD=admin \
+  -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+  -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
   -e KC_DB=postgres \
   -e KC_DB_URL_HOST=postgres \
   -e KC_DB_URL_DATABASE=keycloak \

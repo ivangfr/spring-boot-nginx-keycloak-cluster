@@ -21,13 +21,13 @@ On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-C
 - ### simple-service
 
   `Spring Boot` Web Java application that exposes the following endpoints:
-  - `GET /api/public`: This endpoint is not secured; everybody can access it;
-  - `GET /api/secured`: This endpoint is secured and can only be accessed by users who provide a `JWT` access token issued by `Keycloak`. The token must contain the role `APP_USER`.
+  - `GET /api/public`: This endpoint is not secured; everyone can access it;
+  - `GET /api/secured`: This endpoint is secured and can only be accessed by users who provide a `JWT` access token issued by `Keycloak`. The token must include the role `APP_USER`.
 
 ## Prerequisites
 
-- [`Java 21+`](https://www.oracle.com/java/technologies/downloads/#java21)
-- Some containerization tool [`Docker`](https://www.docker.com), [`Podman`](https://podman.io), etc.
+- [`Java 21`](https://www.oracle.com/java/technologies/downloads/#java21) or higher;
+- A containerization tool (e.g., [`Docker`](https://www.docker.com), [`Podman`](https://podman.io), etc.)
 - [`jq`](https://jqlang.github.io/jq/)
 
 ## Building simple-service Docker Image
@@ -41,7 +41,7 @@ On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-C
 
 ## Configure /etc/hosts
 
-Add the line below to `/etc/hosts`
+Add the following line to `/etc/hosts`
 ```
 127.0.0.1 keycloak-cluster.lb simple-service.lb
 ```
@@ -61,7 +61,7 @@ This script will start:
 
 ## Configuring Keycloak
 
-We can configure a client for `simple-service` in `Keycloak` by using `Keycloak` website at http://keycloak-cluster.lb. However, to keep things simple and fast, we've created a script for it.
+We can configure a client for `simple-service` in `Keycloak` using the `Keycloak` website at http://keycloak-cluster.lb. However, to keep things simple and fast, we have created a script for it.
 
 So, in a terminal, make sure you are inside the `spring-boot-nginx-keycloak-cluster` root folder, run the script below:
 ```
@@ -78,7 +78,7 @@ The script will:
 - create `user-test` user;
 - assign `USERS` group to `user-test`;
 
-To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the end of the script. It will be needed whenever we call `Keycloak` to get a `JWT` access token to access `simple-service`.
+To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value shown at the end of the script. It will be needed whenever we call `Keycloak` to get a JWT access token to access `simple-service`.
 
 ## Testing the simple-service endpoints
 
@@ -137,7 +137,7 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
    Hi user-test, I am a secured endpoint
    ```
 
-7. The access token default expiration period is `5 minutes`. So, wait for this time and, using the same access token, try to call the secured endpoint.
+7. The default expiration period for the access token is `5 minutes`. So, wait for this time and then, using the same access token, try to call the secured endpoint.
 
    It should return:
    ```
@@ -149,13 +149,13 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
 
 8. Checking `Keycloak` and `simple-service` Docker container logs
 
-   We can verify that `Nginx` is load balancing the requests appropriately when an access token request to `Keycloak` is made. To view the `Keycloak` Docker container logs, execute the following commands in different terminals:
+   We can verify that `Nginx` is appropriately load balancing the requests when an access token request to `Keycloak` is made. To view the `Keycloak` Docker container logs, execute the following commands in different terminals:
    ```
    docker logs -f keycloak1
    docker logs -f keycloak2
    ```
 
-   We can also verify that `Nginx` is appropriately load balancing requests to `simple-service` endpoints. To view the `simple-service` Docker container logs, execute the following commands in different terminals:
+   We can also verify that `Nginx` is appropriately load balancing requests to the `simple-service` endpoints. To view the `simple-service` Docker container logs, execute the following commands in different terminals:
    ```
    docker logs -f simple-service1
    docker logs -f simple-service2
@@ -172,7 +172,7 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
   If you wish to modify the `Nginx` configuration file without restarting its Docker container, follow these steps:
   
   - Apply the changes in the `nginx/nginx.conf` file;
-  - Docker exec into the `nginx` Docker container
+  - Execute the following command to access the `nginx` Docker container:
     ```
     docker exec -it nginx bash
     ```
@@ -184,14 +184,14 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value that is shown at the 
 
 ## Shutdown
 
-To stop and remove docker containers, network and volumes, in a terminal, navigate to the `spring-boot-nginx-keycloak-cluster` root folder, run the following script:
+To stop and remove Docker containers, network, and volumes, open a terminal, navigate to the `spring-boot-nginx-keycloak-cluster` root folder, and run the following script:
 ```
 ./shutdown-environment.sh
 ```
 
 ## Cleanup
 
-To remove the `simple-service` Docker image created, in a terminal and inside the `spring-boot-nginx-keycloak-cluster` root folder, run the following script:
+To remove the `simple-service` Docker image created, open a terminal, navigate to the `spring-boot-nginx-keycloak-cluster` root folder, and run the following script:
 ```
 ./remove-docker-images.sh
 ```
