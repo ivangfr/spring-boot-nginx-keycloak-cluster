@@ -24,9 +24,6 @@
         <tag/>
         <url/>
     </scm>
-    <properties>
-        <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -49,11 +46,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>${jib-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>

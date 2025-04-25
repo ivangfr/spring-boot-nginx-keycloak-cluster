@@ -2,7 +2,7 @@
 
 POSTGRES_VERSION="17.2"
 KEYCLOAK_VERSION="26.0.8"
-NGINX_VERSION="1.27.4"
+NGINX_VERSION="1.27.5"
 SIMPLE_SERVICE_VERSION="1.0.0"
 
 if [[ "$(docker images -q ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION} 2> /dev/null)" == "" ]] ; then
