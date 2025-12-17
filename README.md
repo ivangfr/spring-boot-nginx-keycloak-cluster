@@ -21,12 +21,12 @@ On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-C
 - ### simple-service
 
   `Spring Boot` Web Java application that exposes the following endpoints:
-  - `GET /api/public`: This endpoint is not secured; everyone can access it;
+  - `GET /api/public`: This endpoint is not secured; everyone can access it.
   - `GET /api/secured`: This endpoint is secured and can only be accessed by users who provide a `JWT` access token issued by `Keycloak`. The token must include the role `APP_USER`.
 
 ## Prerequisites
 
-- [`Java 21`](https://www.oracle.com/java/technologies/downloads/#java21) or higher;
+- [`Java 21`](https://www.oracle.com/java/technologies/downloads/#java21) or higher.
 - A containerization tool (e.g., [`Docker`](https://www.docker.com), [`Podman`](https://podman.io), etc.)
 - [`jq`](https://jqlang.github.io/jq/)
 
@@ -41,7 +41,7 @@ On [ivangfr.github.io](https://ivangfr.github.io), I have compiled my Proof-of-C
 
 ## Configure /etc/hosts
 
-Add the following line to `/etc/hosts`
+Add the following line to `/etc/hosts`:
 ```text
 127.0.0.1 keycloak-cluster.lb simple-service.lb
 ```
@@ -54,10 +54,10 @@ Open a terminal and inside the `spring-boot-nginx-keycloak-cluster` root folder 
 ```
 
 This script will start:
-- one `PostgreSQL` Docker container;
-- two `Keycloak` Docker containers;
-- two `simple-service` Docker containers;
-- one `Nginx` Docker container;
+- one `PostgreSQL` Docker container.
+- two `Keycloak` Docker containers.
+- two `simple-service` Docker containers.
+- one `Nginx` Docker container.
 
 ## Configuring Keycloak
 
@@ -69,20 +69,20 @@ So, in a terminal, make sure you are inside the `spring-boot-nginx-keycloak-clus
 ```
 
 The script will:
-- create `company-services` realm;
-- disable the required action `Verify Profile`;
-- create `simple-service` client;
-- create the client role `APP_USER` for the `simple-service` client;
-- create `USERS` group;
-- assign `APP_USER` client role to `USERS` group;
-- create `user-test` user;
-- assign `USERS` group to `user-test`;
+- create `company-services` realm.
+- disable the required action `Verify Profile`.
+- create `simple-service` client.
+- create the client role `APP_USER` for the `simple-service` client.
+- create `USERS` group.
+- assign `APP_USER` client role to `USERS` group.
+- create `user-test` user.
+- assign `USERS` group to `user-test`.
 
 To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value shown at the end of the script. It will be needed whenever we call `Keycloak` to get a JWT access token to access `simple-service`.
 
 ## Testing the simple-service endpoints
 
-1. Open a new terminal;
+1. Open a new terminal.
 
 2. Call the endpoint `GET /public`:
    ```bash
@@ -151,7 +151,7 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value shown at the end of t
 
    We can verify that `Nginx` is appropriately load balancing the requests when an access token request to `Keycloak` is made. To view the `Keycloak` Docker container logs, execute the following commands in different terminals:
    ```bash
-   docker logs -f keycloak1
+   docker logs -f keycloak1 keycloak2
    docker logs -f keycloak2
    ```
 
@@ -171,7 +171,7 @@ To complete, copy the `SIMPLE_SERVICE_CLIENT_SECRET` value shown at the end of t
 
   If you wish to modify the `Nginx` configuration file without restarting its Docker container, follow these steps:
   
-  - Apply the changes in the `nginx/nginx.conf` file;
+  - Apply the changes in the `nginx/nginx.conf` file.
   - Execute the following command to access the `nginx` Docker container:
     ```bash
     docker exec -it nginx bash
@@ -191,7 +191,12 @@ To stop and remove Docker containers, network, and volumes, open a terminal, nav
 
 ## Cleanup
 
-To remove the `simple-service` Docker image created, open a terminal, navigate to the `spring-boot-nginx-keycloak-cluster` root folder, and run the following script:
-```bash
-./remove-docker-images.sh
-```
+- To remove the `simple-service` Docker image created, open a terminal, navigate to the `spring-boot-nginx-keycloak-cluster` root folder, and run the following script:
+  ```bash
+  ./remove-docker-images.sh
+  ```
+
+- Remove the line below from `/etc/hosts`:
+  ```text
+  127.0.0.1 keycloak-cluster.lb simple-service.lb
+  ```

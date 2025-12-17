@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-POSTGRES_VERSION="17.2"
-KEYCLOAK_VERSION="26.0.8"
-NGINX_VERSION="1.27.5"
+POSTGRES_VERSION="18.0"
+KEYCLOAK_VERSION="26.4.7"
+NGINX_VERSION="1.29.3"
 SIMPLE_SERVICE_VERSION="1.0.0"
 
 if [[ "$(docker images -q ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION} 2> /dev/null)" == "" ]] ; then
@@ -31,6 +31,7 @@ docker run -d \
   -e POSTGRES_DB=keycloak \
   -e POSTGRES_USER=keycloak \
   -e POSTGRES_PASSWORD=password \
+  --restart unless-stopped \
   --network=spring-boot-nginx-keycloak-cluster-net \
   postgres:${POSTGRES_VERSION}
 
@@ -51,6 +52,7 @@ docker run -d \
   -e KC_HOSTNAME=keycloak-cluster.lb \
   -e KC_PROXY_HEADERS=xforwarded \
   -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
+  --restart unless-stopped \
   --network=spring-boot-nginx-keycloak-cluster-net \
   quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev
 
@@ -71,6 +73,7 @@ docker run -d \
   -e KC_HOSTNAME=keycloak-cluster.lb \
   -e KC_PROXY_HEADERS=xforwarded \
   -e KC_LOG_LEVEL=INFO,org.infinispan:DEBUG,org.keycloak.events:DEBUG \
+  --restart unless-stopped \
   --network=spring-boot-nginx-keycloak-cluster-net \
   quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} start-dev
 
@@ -89,6 +92,7 @@ echo "-------------------------"
 
 docker run -d \
   --name simple-service1 \
+  --restart unless-stopped \
   --network=spring-boot-nginx-keycloak-cluster-net \
   ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION}
 
@@ -98,6 +102,7 @@ echo "-------------------------"
 
 docker run -d \
   --name simple-service2 \
+  --restart unless-stopped \
   --network=spring-boot-nginx-keycloak-cluster-net \
   ivanfranchin/simple-service:${SIMPLE_SERVICE_VERSION}
 
@@ -116,6 +121,7 @@ docker run -d \
   --hostname keycloak-cluster.lb \
   -p 80:80 \
   -v $PWD/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
+  --restart unless-stopped \
   --network spring-boot-nginx-keycloak-cluster-net \
   nginx:${NGINX_VERSION}
 
